@@ -7,11 +7,22 @@ html = page.read().decode("UTF-8")
 file = open("test.txt", "w")
 file.write(html)
 file.close()
-#regex1 = "<h4 class=\"c-teaser__headline\" data-external=\"Teaser.Title\">"
-regex1 = "<section class=\"c-stage c-stage--headlines\" data-external-stage-name=\"headlines\" data-layout=\"headlines\">"
-regex2 = "</section>"
-matches = re.findall(f"({regex1}.*{regex2})", html)
-matches2 = re.search(regex2, html, re.IGNORECASE)
-
-print(len(matches))
-print(matches[0])
+patternStart = "<section class=\"c-stage c-stage--headlines\" data-external-stage-name=\"headlines\" data-layout=\"headlines\">"
+patternEnd = "</section>"
+patternSearch = "title="
+headlines = []
+matchesArray = re.findall(f"({patternStart}.*{patternEnd})", html)
+matches = matchesArray[0]
+for i in range(6):
+        indexOverwrite = re.search(patternSearch, matches).start()
+        indexReadOut = re.search(patternSearch, matches).end()+1
+        matches = matches[:indexOverwrite] + '?' + matches[indexOverwrite+1:]
+        toAppend = ""
+        #print(html[indexReadOut])
+        while matches[indexReadOut] != '"':
+            toAppend = toAppend + matches[indexReadOut]
+            indexReadOut += 1
+        #print(re.search(patternSearch, html))
+        headlines.append(toAppend)
+for w in headlines:
+    print(w)
