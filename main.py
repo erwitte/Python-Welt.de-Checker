@@ -8,10 +8,21 @@ patternStart = "<section class=\"c-stage c-stage--headlines\" data-external-stag
 patternEnd = "</section>"
 patternTitle = "title="
 patternLink = "href="
-headlines = []
+newHeadlines = []
+oldHeadlines = []
+
+def readHeadlines(recipient):
+    for f in open("headlines.txt", "r"):
+        recipient.append(f)
+
+def writeHeadlines(toWrite):
+    with open("headlines.txt", "w") as f:
+        for w in toWrite:
+            f.write(w + "\n")
+
 matchesArray = re.findall(f"({patternStart}.*{patternEnd})", html)
 matches = matchesArray[0]
-print(matches)
+
 indexOverwrite = re.search(patternLink, matches).start()
 matches = matches[:indexOverwrite] + '?' + matches[indexOverwrite+1:]
 for i in range(6):
@@ -22,14 +33,16 @@ for i in range(6):
         indexReadLink = re.search(patternLink, matches).end()+1
         matches = matches[:indexOverwrite] + '?' + matches[indexOverwrite+1:]
         titleAppend = ""
-        linkAppend = "https://www.welt.de/"
+        linkAppend = "https://www.welt.de"
         while matches[indexReadTitle] != '"':
             titleAppend += matches[indexReadTitle]
             indexReadTitle += 1
-        headlines.append(titleAppend)
+        newHeadlines.append(titleAppend)
         while matches[indexReadLink] != '"':
             linkAppend += matches[indexReadLink]
             indexReadLink += 1
-        headlines[i] += "\n Link: " + linkAppend
-for w in headlines:
+        newHeadlines[i] += "\n Link: " + linkAppend
+for w in newHeadlines:
     print(w)
+readHeadlines(oldHeadlines)
+writeHeadlines(newHeadlines)
